@@ -1,2 +1,4 @@
 # patterns
-Patterns in code. 
+Library of patterns and reusable code.
+
+APIs, Scripts, Reusable code and documentation.
