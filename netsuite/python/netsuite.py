@@ -14,3 +14,14 @@ def ns_auth ():
         signature_method=SIGNATURE_HMAC_SHA256,
         realm=os.environ["ns_realm"],
     )
+
+def ns_request (method, url, body=None, **kwargs):
+    response = requests.request(
+        method=method,
+        url=url,
+        auth=ns_auth()
+        json=body
+        headers={}
+    )
+    response.raise_for_status()
+    return response
