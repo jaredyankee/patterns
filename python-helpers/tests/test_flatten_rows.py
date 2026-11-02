@@ -1,5 +1,5 @@
 import pandas as pd
-from flatten_rows import flatten_dataframe
+from flatten_dataframe import flatten_dataframe
 
 def test_collapses_orders_and_sums_price():
     df = pd.DataFrame({
@@ -10,7 +10,9 @@ def test_collapses_orders_and_sums_price():
         "customer": ["Acme", "Acme", "Beta", "Cato", "Cato", "Cato", "Dune"],
     })
     result = flatten_dataframe(df, "order_id", "price")
-
+    print("deez")
     assert len(result) == 4
     assert list(result["price"]) == [35.50, 10.00, 27.25, 25.50]
     assert "item" not in result.columns
+
+test_collapses_orders_and_sums_price()

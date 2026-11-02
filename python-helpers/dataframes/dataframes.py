@@ -35,3 +35,4 @@ def get_all_columns (df):
         all_columns.append(list(df[c]))
     return all_columns
 
+# returns a sub dataframe where col == val

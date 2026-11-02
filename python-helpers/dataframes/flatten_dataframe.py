@@ -3,7 +3,7 @@
 # Flattens rows in a CSV based on a column with duplicate values
 import pandas as pd
 import json
-from tools import create_dataframe_template
+from .dataframes import create_dataframe_template
 # 
 # @param df - pd DataFrame 
 # @param flatten_header - string
