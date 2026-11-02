@@ -36,3 +36,5 @@ def get_all_columns (df):
     return all_columns
 
 # returns a sub dataframe where col == val
+def get_sub (df, col, val):
+    return df.loc[df[col] == val].reset_index()
