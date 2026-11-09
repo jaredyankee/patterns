@@ -1,0 +1,103 @@
+map GetType (string type, string id) {
+    // the function works the same as `GetStrict` but forces the type parameter to be used with the id
+    if (type.isNull()) {
+        return {
+            "ok": false,
+            "message": "Type cannot be null. Please use 'salesorder', 'invoice' or 'payment' for type."
+        };
+    }
+    if (id.isNull()) {
+        return {
+            "ok": false,
+            "message": "'id' cannot be null."
+        };
+    }
+
+    connections = {
+        "salesorder": "zoho_books",
+        "invoice": "zoho_books",
+        "payment": "zoho_books",
+        "shipment": "zoho_inventory"
+    };
+    endpoints = {
+        "salesorder": "/books/v3/salesorders/",
+        "invoice": "/books/v3/invoices/",
+        "payment": "/books/v3/customerpayments/",
+        "shipment": "/inventory/v1/shipmentorders/"
+    };
+    
+    if (!endpoints.containsKey(type)) {
+        return {
+            "ok": false,
+            "message": "the '" + type + "' type is not supported yet."
+        };
+    }
+    request_headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    };
+
+    request_url = "https://www.zohoapis.com" + endpoints.get(type) + id;
+    try {
+        response = null;
+        // you cant have a connection string as a variable so this needs conditional for async
+        if (connections.get(type) == "zoho_books") {
+            response = invokeUrl
+            [
+                url: request_url
+                type: GET
+                headers: request_headers
+                connection: "zoho_books"
+            ];
+        } else if (connections.get(type) == "zoho_inventory") {
+            response = invokeUrl
+            [
+                url: request_url
+                type: GET
+                headers: request_headers
+                connection: "zoho_inventory"
+            ];
+        }
+        if (response.isNull()) {
+            return {
+                "ok": false,
+                "message": "the '" + type + "' type is not supported yet."
+            };
+        }
+        // 0 is the success code; this shows error
+        if (response.get("code") != 0) {
+            info "ERROR GETTING " + type.toUpperCase();
+            return {
+                "ok": false,
+                "type": type,
+                "id": id,
+                "message": response.get("message")  
+            };
+        } 
+        record = response.get(type);
+        info "=========== " + type.toUpperCase() + " RESPONSE ===========";
+        info record;
+        info "=========== " + type.toUpperCase() + " RESPONSE ===========";
+
+        result = {
+            "ok": true
+        };
+        result.put(type, record);
+        return result;
+    } catch (err) {
+        info "ERROR GETTING " + type.toUpperCase();
+        return {
+            "ok": false,
+            "type": type,
+            "id": id,
+            "message": err
+        };
+    }
+    return {
+        "ok": false,
+        "type": type,
+        "id": id,
+        "message": "Failed to fetch record."
+    };
+    
+}
