@@ -1,0 +1,109 @@
+map GetStrict (string salesorder_id, string invoice_id, string payment_id) {
+    /**
+    *   This could be more less verbose from a modular standpoint by just passing id and type..
+    *       I did it this way for ease of use when executing in ZohoFlow's code editor:
+    *           Its much easier to just paste the ID for the record type you want than putting the ID and the type every time (IMO)
+    */
+
+    request_headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    };
+
+
+    if (!salesorder_id.isNull()) {
+        try {
+            response = invokeUrl
+            [
+                url: "https://www.zohoapis.com/books/v3/salesorders/" + salesorder_id
+                type: GET
+                headers: request_headers
+                connection: "zoho_books"
+            ];
+            if (response.get("code") != 0) {
+                info "ERROR GETTING SALESORDER";
+                
+                return {
+                    "ok": false,
+                    "salesorder_id": salesorder_id,
+                    "message": response.get("message")
+                };
+            }
+            salesorder = response.get("salesorder");
+            info "=========== SALESORDER RESPONSE ===========";
+            info salesorder;
+            info "=========== SALESORDER RESPONSE ===========";
+        } catch (err) {
+            info "Error: " + err;
+            return {
+                "ok": false,
+                "salesorder_id": salesorder_id,
+                "message": err
+            };
+        }
+    }
+    if (!invoice_id.isNull()) {
+        try {
+            response = invokeUrl
+            [
+                url: "https://www.zohoapis.com/books/v3/invoices/" + invoice_id
+                type: GET
+                headers: request_headers
+                connection: "zoho_books"
+            ];
+            if (response.get("code") != 0) {
+                info "ERROR GETTING SALESORDER";
+                return {
+                    "ok": false,
+                    "invoice_id": invoice_id,
+                    "message": response.get("message")
+                };
+            }
+            invoice = response.get("invoice");
+            info "=========== INVOICE RESPONSE ===========";
+            info invoice;
+            info "=========== INVOICE RESPONSE ===========";
+        } catch (err) {
+            info "Error: " + err;
+            return {
+                "ok": false,
+                "invoice_id": invoice_id,
+                "message": err
+            };
+        }
+    }
+    if (!payment_id.isNull()) {
+        try {
+            response = invokeUrl
+            [
+                url: "https://www.zohoapis.com/books/v3/customerpayments/" + payment_id
+                type: GET
+                headers: request_headers
+                connection: "zoho_books"
+            ];
+            if (response.get("code") != 0) {
+                info "ERROR GETTING PAYMENT";
+                return {
+                    "ok": false,
+                    "payment_id": payment_id,
+                    "message": response.get("message")
+                };
+            }
+            payment = response.get("payment");
+            info "=========== PAYMENT RESPONSE ===========";
+            info payment;
+            info "=========== PAYMENT RESPONSE ===========";
+        } catch (err) {
+            info "Error: " + err;
+            return {
+                "ok": false,
+                "payment_id": payment_id,
+                "message": err
+            };
+        }
+    }
+    return {
+        "ok": false,
+        "message": "Failed to fetch record."
+    };
+}
