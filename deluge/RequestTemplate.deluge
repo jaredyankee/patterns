@@ -1,0 +1,28 @@
+void RequestTemplate () {
+    request_headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    };
+    // template for GET request
+
+    platform = "";
+    record_type = "";
+    record_id = "";
+
+    try {
+        response = invokeUrl
+        [
+            url: "http://www.zohoapis.com/" + platform + "/" + version.get(platform) + "/" + record_type + "/" + record_id
+            type: GET
+            headers: request_headers
+            connection: "platform" // connection can't be stored in a variable as its not technically a string
+        ]
+        if (response.get("code") != 0) {
+            info response;
+            throws "Error getting <record_type>";
+        }
+        object = response.get(record_type);
+    } catch (err) {
+        info err;
+    }
+}
